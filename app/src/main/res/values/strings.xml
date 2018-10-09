@@ -2,4 +2,6 @@
     <string name="app_name">Hello World</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
+    <string name="addition_number1">0</string>
+    <string name="addition_number2">0</string>
 </resources>
