@@ -4,4 +4,11 @@
     <string name="button_send">Send</string>
     <string name="addition_number1">0</string>
     <string name="addition_number2">0</string>
+    <string name="button_calculate">Laske</string>
+    <string name="substraction_number1">0</string>
+    <string name="substraction_number2">0</string>
+    <string name="multiplication_number1">0</string>
+    <string name="multiplication_number2">0</string>
+    <string name="division_number1">0</string>
+    <string name="division_number2">0</string>
 </resources>
