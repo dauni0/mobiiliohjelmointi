@@ -5,28 +5,25 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.example.daniel.helloworld.MESSAGE";
     public static final String LOG_STRING="com.example.daniel.helloworld.LOG";
+    public ArrayList<String> logArray = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-
-    /** Called when the user taps the Send Button */
-    public void sendMessage(View view) {
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
     }
 
     /** Calculate two numbers */
@@ -48,8 +45,12 @@ public class MainActivity extends AppCompatActivity {
         TextView addition_result_text = findViewById(R.id.additionResult);
         addition_result_text.setText(addition_result.toString());
 
-        //Add result to log string
+        // add calculation to string
 
+        String addition_log = additionNumber1 + " + " + additionNumber2 + " = " + addition_result.toString();
+        logArray.add(addition_log);
+
+        Log.d("tagi", addition_log);
     }
 
     public void calculateSubstraction(View view) {
@@ -66,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
         TextView substraction_result_text = findViewById(R.id.substractionResult);
         substraction_result_text.setText(substraction_result.toString());
+
+        String substraction_log = substractionNumber1 + " - " + substractionNumber2 + " = " + substraction_result.toString();
+        logArray.add(substraction_log);
+
+        Log.d("tagi", substraction_log);
     }
 
     public void calculateMultiplication(View view) {
@@ -82,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
 
         TextView multiplication_result_text = findViewById(R.id.multiplicationResult);
         multiplication_result_text.setText(multiplication_result.toString());
+
+        String multiplication_log = multiplicationNumber1 + " x " + multiplicationNumber2 + " = " + multiplication_result.toString();
+        logArray.add(multiplication_log);
+
+        Log.d("tagi", multiplication_log);
     }
 
     public void calculateDivision(View view) {
@@ -107,6 +118,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            String division_log = divisionNumber1 + " / " + divisionNumber2 + " = " + "?";
+            logArray.add(division_log);
+
+            Log.d("tagi", division_log);
+
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
@@ -116,6 +132,11 @@ public class MainActivity extends AppCompatActivity {
 
             TextView division_result_text = findViewById(R.id.divisionResult);
             division_result_text.setText(division_result.toString());
+
+            String division_log = divisionNumber1 + " / " + divisionNumber2 + " = " + division_result.toString();
+            logArray.add(division_log);
+
+            Log.d("tagi", division_log);
         }
 
     }
@@ -164,10 +185,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showLog(View view) {
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
+        Intent intent = new Intent(this, DisplayLogActivity.class);
+
+        String logString = TextUtils.join(System.getProperty("line.separator"), logArray);
+
+        intent.putExtra(LOG_STRING, logString);
         startActivity(intent);
     }
 
