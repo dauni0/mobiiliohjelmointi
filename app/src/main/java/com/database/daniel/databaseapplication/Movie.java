@@ -15,7 +15,7 @@ public class Movie {
 
     @NonNull
     @ColumnInfo(name = "rating")
-    private Float mRating;
+    private Double mRating;
 
     @NonNull
     @ColumnInfo(name = "runtime")
@@ -25,16 +25,16 @@ public class Movie {
     @ColumnInfo(name = "releaseYear")
     private Integer mReleaseYear;
 
-    public Movie (@NonNull String name, @NonNull Float rating, @NonNull Integer runtime, @NonNull Integer releaseYear) {
+    public Movie (@NonNull String name, @NonNull Double rating, @NonNull Integer runtime, @NonNull Integer releaseYear) {
         this.mName = name;
         this.mRating = rating;
         this.mRuntime = runtime;
         this.mReleaseYear = releaseYear;
     }
 
-    public String getMovieName() {return this.mName;}
-    public Float getMovieRating() {return this.mRating;}
-    public Integer getMovieRuntime() {return this.mRuntime;}
-    public Integer getMovieReleaseYear() {return this.mReleaseYear;}
+    public String getName() {return this.mName;}
+    public Double getRating() {return this.mRating;}
+    public Integer getRuntime() {return this.mRuntime;}
+    public Integer getReleaseYear() {return this.mReleaseYear;}
 
 }

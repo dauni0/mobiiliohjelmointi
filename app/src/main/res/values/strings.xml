@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Database Application</string>
+    <string name="movie_name">Elokuvan nimi</string>
+    <string name="movie_rating">IMDB</string>
+    <string name="movie_length">Pituus</string>
+    <string name="movie_releaseyear">Vuosi</string>
 </resources>
