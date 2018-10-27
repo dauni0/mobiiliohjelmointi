@@ -1,14 +1,15 @@
 package com.database.daniel.databaseapplication;
 
-import android.arch.lifecycle.LiveData;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -23,63 +24,162 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mMovieRepository = new MovieRepository(getApplication());
-        /*RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        final MovieListAdapter adapter = new MovieListAdapter(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));*/
+
+        //Update the UI to display database content
+        mMovieRepository.updateAllMoviesList(this, "rating");
     }
 
     public void addNewMovie(View view) {
 
         //Get view by id and convert to movie object
 
-        EditText newMovieName = (EditText) findViewById(R.id.movieName);
+        EditText newMovieName = findViewById(R.id.movieName);
         String newMovieNameString = newMovieName.getText().toString();
-        //Integer addition_1 = Integer.parseInt(additionNumber1);
 
-        EditText newMovieRating = (EditText) findViewById(R.id.movieRating);
+        EditText newMovieRating = findViewById(R.id.movieRating);
         String newMovieRatingString = newMovieRating.getText().toString();
         Double newMovieRatingDouble = Double.parseDouble(newMovieRatingString);
 
-        EditText newMovieRuntime = (EditText) findViewById(R.id.movieRuntime);
+        EditText newMovieRuntime = findViewById(R.id.movieRuntime);
         String newMovieRuntimeString = newMovieRuntime.getText().toString();
         Integer newMovieRuntimeInt = Integer.parseInt(newMovieRuntimeString);
 
-        EditText newMovieReleaseyear = (EditText) findViewById(R.id.movieReleaseyear);
+        EditText newMovieReleaseyear = findViewById(R.id.movieReleaseyear);
         String newMovieReleaseyearString = newMovieReleaseyear.getText().toString();
         Integer newMovieReleaseyearInt = Integer.parseInt(newMovieReleaseyearString);
 
         Movie movie = new Movie(newMovieNameString, newMovieRatingDouble, newMovieRuntimeInt, newMovieReleaseyearInt);
 
-        //MovieRepository movieRepository = new MovieRepository(getApplication());
-
         mMovieRepository.insert(movie);
 
         Log.d("MYTAG", "Adding movie: " + movie.getName());
 
-        //List<Movie> movieList =  mMovieRepository.getAllMovies();
-
-        Log.d("MYTAG", "All movies got");
-
-        mMovieRepository.updateAllMoviesList(this);
+        mMovieRepository.updateAllMoviesList(this, "name");
     }
 
-    public void deleteMovie(View view) {
+    public void deleteMovieByName(View view) {
 
-        //get movie
+        EditText deleteMovieName = findViewById(R.id.movieName);
+        String deleteMovieNameString = deleteMovieName.getText().toString();
 
-        Movie movie = new Movie("name", 9.9, 100, 1996);
+        mMovieRepository.deleteByName(deleteMovieNameString);
 
-        //then delete that movie
+        mMovieRepository.updateAllMoviesList(this, "name");
 
-        mMovieRepository.delete(movie);
+    }
+
+    public void deleteMovie(String movieName) {
+
+        mMovieRepository.deleteByName(movieName);
+
+        mMovieRepository.updateAllMoviesList(this, "name");
+
     }
 
     public void showAllMovies(View view) {
 
         //get all movies
 
-        mMovieRepository.updateAllMoviesList(this);
+        mMovieRepository.updateAllMoviesList(this, "name");
     }
 
+    public void deleteAllMovies(View view) {
+
+        mMovieRepository.deleteAll();
+
+        mMovieRepository.updateAllMoviesList(this, "name");
+    }
+
+    public void orderMoviesName(View view) {
+        mMovieRepository.updateAllMoviesList(this, "name");
+    }
+
+    public void orderMoviesRating(View view) {
+        mMovieRepository.updateAllMoviesList(this, "rating");
+    }
+
+    public void orderMoviesRuntime(View view) {
+        mMovieRepository.updateAllMoviesList(this, "runtime");
+    }
+
+    public void orderMoviesReleaseyear(View view) {
+        mMovieRepository.updateAllMoviesList(this, "releaseyear");
+    }
+
+    public void updateMovieUI(List<Movie> mAllMoviesList) {
+
+        TableLayout mMovieTable = findViewById(R.id.movieTable);
+        mMovieTable.removeAllViews();
+
+        if (mAllMoviesList.isEmpty()) {
+            TextView tempText = new TextView(this);
+            tempText.setText("Elokuvia ei ole lisätty vielä");
+            TableRow mTempRow = new TableRow(this);
+            mTempRow.addView(tempText);
+            mMovieTable.addView(mTempRow);
+
+        }
+        else {
+
+            for (final Movie movie : mAllMoviesList) {
+                Log.d("MYTAG", "Found in database movie: " + movie.getName());
+
+                String movieString = movie.getName() + " " + movie.getRating().toString() + " "
+                        + movie.getRuntime().toString() + " " + movie.getReleaseYear().toString() +
+                        System.getProperty("line.separator");
+
+                TableRow mRow = new TableRow(this);
+
+                //TableRow mRow = (TableRow)LayoutInflater.from(this).inflate(R.layout.tableview, null);
+
+                TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
+
+                mRow.setLayoutParams(lp);
+
+                final String movieName = movie.getName();
+
+                TextView movieNameTV = new TextView(this);
+                movieNameTV.setText(movie.getName());
+
+                //((TextView)mRow.findViewById(R.id.movieTableRowName)).setText(movie.getName());
+
+                TextView movieRatingTV = new TextView(this);
+                movieRatingTV.setText(movie.getRating().toString());
+
+                //((TextView)mRow.findViewById(R.id.movieTableRowRating)).setText(movie.getRating().toString());
+
+                TextView movieRuntimeTV = new TextView(this);
+                movieRuntimeTV.setText(movie.getRuntime().toString());
+
+                //((TextView)mRow.findViewById(R.id.movieTableRowRuntime)).setText(movie.getRuntime().toString());
+
+                TextView movieReleaseyearTV = new TextView(this);
+                movieReleaseyearTV.setText(movie.getReleaseYear().toString());
+
+                //((TextView)mRow.findViewById(R.id.movieTableRowReleaseyear)).setText(movie.getReleaseYear().toString());
+
+                //Button btn = ((Button)mRow.findViewById(R.id.movieTableRowButton));
+
+                Button btn = new Button(this);
+                btn.setText("Poista");
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d("MYTAG", "Clicked button");
+
+                        deleteMovie(movieName);
+                    }
+                });
+
+                mRow.addView(movieNameTV);
+                mRow.addView(movieRatingTV);
+                mRow.addView(movieRuntimeTV);
+                mRow.addView(movieReleaseyearTV);
+
+                mRow.addView(btn);
+
+                mMovieTable.addView(mRow);
+            }
+        }
+    }
 }

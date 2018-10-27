@@ -30,21 +30,22 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:onClick="addNewMovie"
-        android:text="Lisää elokuva"
-        app:layout_constraintEnd_toStartOf="@+id/deleteFirstMovie"
+        android:text="Lisää"
+        app:layout_constraintEnd_toStartOf="@+id/deleteMovieByName"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/movieRating" />
 
     <Button
-        android:id="@+id/deleteFirstMovie"
+        android:id="@+id/deleteMovieByName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:text="Poista ensimmäinen"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:onClick="deleteMovieByName"
+        android:text="Poista nimellä"
         app:layout_constraintBaseline_toBaselineOf="@+id/addMovie"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button9"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/addMovie" />
 
@@ -65,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:onClick="showAllMovies"
+        android:onClick="orderMoviesName"
         android:text="Nimi"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView6"
         app:layout_constraintStart_toEndOf="@+id/textView6" />
@@ -78,6 +79,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:onClick="orderMoviesRating"
         android:text="Arvosana"
         app:layout_constraintBaseline_toBaselineOf="@+id/sortByName"
         app:layout_constraintEnd_toEndOf="parent"
@@ -90,6 +92,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
+        android:onClick="orderMoviesRuntime"
         android:text="Pituus"
         app:layout_constraintStart_toEndOf="@+id/textView6"
         app:layout_constraintTop_toBottomOf="@+id/sortByName" />
@@ -102,6 +105,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:onClick="orderMoviesReleaseyear"
         android:text="Julkaisuvuosi"
         app:layout_constraintBaseline_toBaselineOf="@+id/sortByLength"
         app:layout_constraintEnd_toEndOf="parent"
@@ -152,19 +156,86 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/movieRating" />
 
-    <TextView
-        android:id="@+id/moviesTextView"
+    <Button
+        android:id="@+id/button9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:gravity="center"
-        android:text="Leffat tulee tänne"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:onClick="deleteAllMovies"
+        android:text="Poista kaikki"
+        app:layout_constraintBaseline_toBaselineOf="@+id/deleteMovieByName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sortByLength" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/deleteMovieByName" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sortByLength"
+        tools:layout_editor_absoluteX="0dp">
+
+        <TableLayout
+            android:id="@+id/movieTable"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:padding="10dip"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sortByLength">
+
+            <TableRow
+                android:id="@+id/movieTableRow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dip">
+
+                <TextView
+                    android:id="@+id/movieTableRowName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/MovieTableRowRating"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/movieTableRowRuntime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TextView" />
+
+                <Button
+                    android:id="@+id/movieTableRowButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Button" />
+
+            </TableRow>
+
+        </TableLayout>
+
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

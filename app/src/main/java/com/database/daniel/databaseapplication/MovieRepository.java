@@ -2,9 +2,13 @@ package com.database.daniel.databaseapplication;
 
 import android.app.Activity;
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -13,7 +17,7 @@ import java.util.List;
 public class MovieRepository {
 
     private MovieDao mMovieDao;
-    private List<Movie> mAllMovies;
+    //private List<Movie> mAllMovies;
 
     MovieRepository(Application application) {
         MovieRoomDatabase db = MovieRoomDatabase.getDatabase(application);
@@ -21,8 +25,8 @@ public class MovieRepository {
         //mAllMovies = mMovieDao.getAllMovies();
     }
 
-    public void updateAllMoviesList(Activity act) {
-        new updateMoviesAsyncTask(mMovieDao, act).execute();
+    public void updateAllMoviesList(Activity act, String order) {
+        new updateMoviesAsyncTask(mMovieDao, act, order).execute();
     }
 
     private static class updateMoviesAsyncTask extends AsyncTask<Void, Void, List<Movie>> {
@@ -30,16 +34,39 @@ public class MovieRepository {
         private MovieDao mAsyncTaskDao;
         private List<Movie> mAllMoviesList;
         private Activity mActivity;
+        private String mOrder;
 
-        updateMoviesAsyncTask(MovieDao dao, Activity act) {
+        updateMoviesAsyncTask(MovieDao dao, Activity act, String order) {
             mAsyncTaskDao = dao;
             mActivity = act;
+            mOrder = order;
         }
 
         @Override
         protected List<Movie> doInBackground(final Void... Params) {
 
-            mAllMoviesList = mAsyncTaskDao.getAllMovies();
+            if (mOrder.equals("name")) {
+                mAllMoviesList = mAsyncTaskDao.getAllMoviesOrderByName();
+                Log.d("MYTAG", "Movies sorted by name");
+            }
+            else if (mOrder.equals("rating")) {
+                mAllMoviesList = mAsyncTaskDao.getAllMoviesOrderByRating();
+                Log.d("MYTAG", "Movies sorted by rating");
+            }
+            else if (mOrder.equals("runtime")) {
+                mAllMoviesList = mAsyncTaskDao.getAllMoviesOrderByRuntime();
+                Log.d("MYTAG", "Movies sorted by runtime");
+            }
+            else if (mOrder.equals("releaseyear")) {
+                mAllMoviesList = mAsyncTaskDao.getAllMoviesOrderByReleaseyear();
+                Log.d("MYTAG", "Movies sorted by release");
+            }
+            else {
+                mAllMoviesList = mAsyncTaskDao.getAllMoviesOrderByName();
+                Log.d("MYTAG", "Movies sorted by name by default");
+            }
+
+            //mAllMoviesList = mAsyncTaskDao.getAllMoviesOrderByName();
             return mAllMoviesList;
         }
 
@@ -47,23 +74,9 @@ public class MovieRepository {
         protected void onPostExecute(List<Movie> mAllMoviesList) {
             super.onPostExecute(mAllMoviesList);
 
-            TextView mMoviesView = mActivity.findViewById(R.id.moviesTextView);
-
-            mMoviesView.setText("");
-
-            for (Movie movie: mAllMoviesList) {
-                Log.d("MYTAG", "Found in database movie: " + movie.getName());
-
-                String movieString = movie.getName() + " " + movie.getRating().toString() + " "
-                        + movie.getRuntime().toString() + " " + movie.getReleaseYear().toString() +
-                        System.getProperty("line.separator");
-
-                mMoviesView.append(movieString);
-            }
+            ((MainActivity) mActivity).updateMovieUI(mAllMoviesList);
         }
     }
-
-
 
     public void insert (Movie movie) {
         new insertAsyncTask(mMovieDao).execute(movie);
@@ -99,6 +112,44 @@ public class MovieRepository {
         @Override
         protected Void doInBackground(final Movie... params) {
             mAsyncTaskDao.deleteOne(params[0]);
+            return null;
+        }
+    }
+
+    public void deleteByName (String movieName) {
+        new deleteByNameAsyncTask(mMovieDao).execute(movieName);
+    }
+
+    private static class deleteByNameAsyncTask extends AsyncTask<String, Void, Void> {
+
+        private MovieDao mAsyncTaskDao;
+
+        deleteByNameAsyncTask(MovieDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final String... params) {
+            mAsyncTaskDao.deleteByName(params[0]);
+            return null;
+        }
+    }
+
+    public void deleteAll () {
+        new deleteAllAsyncTask(mMovieDao).execute();
+    }
+
+    private static class deleteAllAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private MovieDao mAsyncTaskDao;
+
+        deleteAllAsyncTask(MovieDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Void... params) {
+            mAsyncTaskDao.deleteAll();
             return null;
         }
     }
