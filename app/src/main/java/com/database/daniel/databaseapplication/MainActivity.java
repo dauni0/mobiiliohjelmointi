@@ -1,5 +1,7 @@
 package com.database.daniel.databaseapplication;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,16 +9,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private MovieRepository mMovieRepository;
-    private List<Movie> mMovies;
+    private List<Movie> mMovies = new ArrayList<>();
+
+    private DatabaseReference mFirebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +44,86 @@ public class MainActivity extends AppCompatActivity {
         mMovieRepository = new MovieRepository(getApplication());
 
         //Update the UI to display database content
-        mMovieRepository.updateAllMoviesList(this, "rating");
+        //mMovieRepository.updateAllMoviesList(this, "rating");
+
+        // Get Firebase database
+        mFirebase = FirebaseDatabase.getInstance().getReference();
+
+        mFirebase.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (mMovies != null) {
+                    mMovies.clear();
+                }
+
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+
+                    String movieName = (String) singleSnapshot.child("name").getValue();
+
+                    String movieRatingString = String.valueOf(singleSnapshot.child("rating").getValue());
+                    Double movieRating = Double.parseDouble(movieRatingString);
+
+                    String movieRuntimeString = String.valueOf(singleSnapshot.child("runtime").getValue());
+                    Integer movieRuntime = Integer.parseInt(movieRuntimeString);
+
+                    String movieReleaseyearString = String.valueOf(singleSnapshot.child("releaseYear").getValue());
+                    Integer movieReleaseyear = Integer.parseInt(movieReleaseyearString);
+
+                    Log.d("MYFIREBASETAG", "Got casted movie name: " + movieName);
+
+                    Movie myMovie = new Movie(movieName, movieRating, movieRuntime, movieReleaseyear);
+
+                    mMovies.add(myMovie);
+                }
+
+                Log.d("MYFIREBASETAG", "Updating UI with movies");
+                updateMovieUI(mMovies);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (mMovies != null) {
+                    mMovies.clear();
+                }
+
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+
+                    String movieName = (String) singleSnapshot.child("name").getValue();
+
+                    String movieRatingString = String.valueOf(singleSnapshot.child("rating").getValue());
+                    Double movieRating = Double.parseDouble(movieRatingString);
+
+                    String movieRuntimeString = String.valueOf(singleSnapshot.child("runtime").getValue());
+                    Integer movieRuntime = Integer.parseInt(movieRuntimeString);
+
+                    String movieReleaseyearString = String.valueOf(singleSnapshot.child("releaseYear").getValue());
+                    Integer movieReleaseyear = Integer.parseInt(movieReleaseyearString);
+
+                    Log.d("MYFIREBASETAG", "Got casted movie name: " + movieName);
+
+                    Movie myMovie = new Movie(movieName, movieRating, movieRuntime, movieReleaseyear);
+
+                    mMovies.add(myMovie);
+                }
+
+                Log.d("MYFIREBASETAG", "Updating UI with movies");
+                updateMovieUI(mMovies);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void addNewMovie(View view) {
@@ -34,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         //Get view by id and convert to movie object
 
         EditText newMovieName = findViewById(R.id.movieName);
-        String newMovieNameString = newMovieName.getText().toString();
+        String newMovieNameString = newMovieName.getText().toString().trim();
 
         EditText newMovieRating = findViewById(R.id.movieRating);
         String newMovieRatingString = newMovieRating.getText().toString();
@@ -50,11 +147,15 @@ public class MainActivity extends AppCompatActivity {
 
         Movie movie = new Movie(newMovieNameString, newMovieRatingDouble, newMovieRuntimeInt, newMovieReleaseyearInt);
 
-        mMovieRepository.insert(movie);
+        //mMovieRepository.insert(movie);
+
+        mFirebase.child("movies").child(movie.getName()).setValue(movie);
 
         Log.d("MYTAG", "Adding movie: " + movie.getName());
 
-        mMovieRepository.updateAllMoviesList(this, "name");
+        updateMovieUI(mMovies);
+
+        //mMovieRepository.updateAllMoviesList(this, "name");
     }
 
     public void deleteMovieByName(View view) {
@@ -62,48 +163,59 @@ public class MainActivity extends AppCompatActivity {
         EditText deleteMovieName = findViewById(R.id.movieName);
         String deleteMovieNameString = deleteMovieName.getText().toString();
 
-        mMovieRepository.deleteByName(deleteMovieNameString);
+        //mMovieRepository.deleteByName(deleteMovieNameString);
 
-        mMovieRepository.updateAllMoviesList(this, "name");
+        mFirebase.child("movies").child(deleteMovieNameString).removeValue();
+
+        //mMovieRepository.updateAllMoviesList(this, "name");
+
+        updateMovieUI(mMovies);
 
     }
 
     public void deleteMovie(String movieName) {
 
-        mMovieRepository.deleteByName(movieName);
+        //mMovieRepository.deleteByName(movieName);
 
-        mMovieRepository.updateAllMoviesList(this, "name");
+        mFirebase.child("movies").child(movieName).removeValue();
 
+        //mMovieRepository.updateAllMoviesList(this, "name");
+
+        updateMovieUI(mMovies);
     }
 
     public void showAllMovies(View view) {
 
         //get all movies
 
-        mMovieRepository.updateAllMoviesList(this, "name");
+        //mMovieRepository.updateAllMoviesList(this, "name");
     }
 
     public void deleteAllMovies(View view) {
 
-        mMovieRepository.deleteAll();
+        mFirebase.child("movies").removeValue();
 
-        mMovieRepository.updateAllMoviesList(this, "name");
+        //mMovieRepository.deleteAll();
+
+        updateMovieUI(mMovies);
+
+        //mMovieRepository.updateAllMoviesList(this, "name");
     }
 
     public void orderMoviesName(View view) {
-        mMovieRepository.updateAllMoviesList(this, "name");
+        //mMovieRepository.updateAllMoviesList(this, "name");
     }
 
     public void orderMoviesRating(View view) {
-        mMovieRepository.updateAllMoviesList(this, "rating");
+        //mMovieRepository.updateAllMoviesList(this, "rating");
     }
 
     public void orderMoviesRuntime(View view) {
-        mMovieRepository.updateAllMoviesList(this, "runtime");
+        //mMovieRepository.updateAllMoviesList(this, "runtime");
     }
 
     public void orderMoviesReleaseyear(View view) {
-        mMovieRepository.updateAllMoviesList(this, "releaseyear");
+        //mMovieRepository.updateAllMoviesList(this, "releaseyear");
     }
 
     public void updateMovieUI(List<Movie> mAllMoviesList) {
