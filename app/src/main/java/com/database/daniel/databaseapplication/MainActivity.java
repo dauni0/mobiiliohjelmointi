@@ -204,18 +204,214 @@ public class MainActivity extends AppCompatActivity {
 
     public void orderMoviesName(View view) {
         //mMovieRepository.updateAllMoviesList(this, "name");
+
+        if (mMovies != null) {
+            Log.d("MYFIREBASETAG", "Clearing movies");
+            mMovies.clear();
+        }
+
+        mFirebase.child("movies").orderByChild("name").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                String movieName = (String) dataSnapshot.child("name").getValue();
+
+                String movieRatingString = String.valueOf(dataSnapshot.child("rating").getValue());
+                Double movieRating = Double.parseDouble(movieRatingString);
+
+                String movieRuntimeString = String.valueOf(dataSnapshot.child("runtime").getValue());
+                Integer movieRuntime = Integer.parseInt(movieRuntimeString);
+
+                String movieReleaseyearString = String.valueOf(dataSnapshot.child("releaseYear").getValue());
+                Integer movieReleaseyear = Integer.parseInt(movieReleaseyearString);
+
+                Movie myMovie = new Movie(movieName, movieRating, movieRuntime, movieReleaseyear);
+
+                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is named " + myMovie.getRating());
+
+                mMovies.add(myMovie);
+                Log.d("MYFIREBASETAG", "Updating movies after sorted list by name");
+                updateMovieUI(mMovies);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("MYFIREBASETAG", "Movie deleted");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("MYFIREBASETAG", "Database error");
+            }
+        });
     }
 
     public void orderMoviesRating(View view) {
         //mMovieRepository.updateAllMoviesList(this, "rating");
+
+        if (mMovies != null) {
+            Log.d("MYFIREBASETAG", "Clearing movies");
+            mMovies.clear();
+        }
+
+        mFirebase.child("movies").orderByChild("rating").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                String movieName = (String) dataSnapshot.child("name").getValue();
+
+                String movieRatingString = String.valueOf(dataSnapshot.child("rating").getValue());
+                Double movieRating = Double.parseDouble(movieRatingString);
+
+                String movieRuntimeString = String.valueOf(dataSnapshot.child("runtime").getValue());
+                Integer movieRuntime = Integer.parseInt(movieRuntimeString);
+
+                String movieReleaseyearString = String.valueOf(dataSnapshot.child("releaseYear").getValue());
+                Integer movieReleaseyear = Integer.parseInt(movieReleaseyearString);
+
+                Movie myMovie = new Movie(movieName, movieRating, movieRuntime, movieReleaseyear);
+
+                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is rated " + myMovie.getRating());
+
+                mMovies.add(myMovie);
+                Log.d("MYFIREBASETAG", "Updating movies after sorted list by rating");
+                updateMovieUI(mMovies);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("MYFIREBASETAG", "Movie deleted");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("MYFIREBASETAG", "Database error");
+            }
+        });
     }
 
     public void orderMoviesRuntime(View view) {
         //mMovieRepository.updateAllMoviesList(this, "runtime");
+
+        if (mMovies != null) {
+            Log.d("MYFIREBASETAG", "Clearing movies");
+            mMovies.clear();
+        }
+
+        mFirebase.child("movies").orderByChild("runtime").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                String movieName = (String) dataSnapshot.child("name").getValue();
+
+                String movieRatingString = String.valueOf(dataSnapshot.child("rating").getValue());
+                Double movieRating = Double.parseDouble(movieRatingString);
+
+                String movieRuntimeString = String.valueOf(dataSnapshot.child("runtime").getValue());
+                Integer movieRuntime = Integer.parseInt(movieRuntimeString);
+
+                String movieReleaseyearString = String.valueOf(dataSnapshot.child("releaseYear").getValue());
+                Integer movieReleaseyear = Integer.parseInt(movieReleaseyearString);
+
+                Movie myMovie = new Movie(movieName, movieRating, movieRuntime, movieReleaseyear);
+
+                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is runtime " + myMovie.getRating());
+
+                mMovies.add(myMovie);
+                Log.d("MYFIREBASETAG", "Updating movies after sorted list by runtime");
+                updateMovieUI(mMovies);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("MYFIREBASETAG", "Movie deleted");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("MYFIREBASETAG", "Database error");
+            }
+        });
     }
 
     public void orderMoviesReleaseyear(View view) {
         //mMovieRepository.updateAllMoviesList(this, "releaseyear");
+
+        if (mMovies != null) {
+            Log.d("MYFIREBASETAG", "Clearing movies");
+            mMovies.clear();
+        }
+
+        mFirebase.child("movies").orderByChild("releaseYear").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                String movieName = (String) dataSnapshot.child("name").getValue();
+
+                String movieRatingString = String.valueOf(dataSnapshot.child("rating").getValue());
+                Double movieRating = Double.parseDouble(movieRatingString);
+
+                String movieRuntimeString = String.valueOf(dataSnapshot.child("runtime").getValue());
+                Integer movieRuntime = Integer.parseInt(movieRuntimeString);
+
+                String movieReleaseyearString = String.valueOf(dataSnapshot.child("releaseYear").getValue());
+                Integer movieReleaseyear = Integer.parseInt(movieReleaseyearString);
+
+                Movie myMovie = new Movie(movieName, movieRating, movieRuntime, movieReleaseyear);
+
+                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is released " + myMovie.getRating());
+
+                mMovies.add(myMovie);
+                Log.d("MYFIREBASETAG", "Updating movies after sorted list by release year");
+                updateMovieUI(mMovies);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("MYFIREBASETAG", "Movie deleted");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("MYFIREBASETAG", "Database error");
+            }
+        });
     }
 
     public void updateMovieUI(List<Movie> mAllMoviesList) {
