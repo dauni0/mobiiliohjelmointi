@@ -5,7 +5,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.database.daniel.databaseapplication"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -40,6 +40,7 @@ dependencies {
     //Firebase components
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.firebaseui:firebase-ui-auth:4.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -1,5 +1,6 @@
 package com.database.daniel.databaseapplication;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +42,22 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference mFirebase;
 
+    private static int RC_SIGN_IN = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
+
         mMovieRepository = new MovieRepository(getApplication());
+
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers).build()
+                , RC_SIGN_IN);
 
         //Update the UI to display database content
         //mMovieRepository.updateAllMoviesList(this, "rating");
@@ -124,6 +140,28 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == RESULT_OK) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Log.d("MYFIREBASETAG", "Logged in succesfully");
+            }
+            else {
+                if (resultCode == RESULT_CANCELED) {
+                    Log.d("MYFIREBASETAG", "User cancelled log in");
+                }
+                else {
+                    Log.d("MYFIREBASETAG", "Log in failed with error: "
+                            + response.getError().getErrorCode());
+                }
+            }
+        }
     }
 
     public void addNewMovie(View view) {
@@ -226,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Movie myMovie = new Movie(movieName, movieRating, movieRuntime, movieReleaseyear);
 
-                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is named " + myMovie.getRating());
+                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is named " + myMovie.getName());
 
                 mMovies.add(myMovie);
                 Log.d("MYFIREBASETAG", "Updating movies after sorted list by name");
@@ -332,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Movie myMovie = new Movie(movieName, movieRating, movieRuntime, movieReleaseyear);
 
-                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is runtime " + myMovie.getRating());
+                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is runtime " + myMovie.getRuntime());
 
                 mMovies.add(myMovie);
                 Log.d("MYFIREBASETAG", "Updating movies after sorted list by runtime");
@@ -385,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Movie myMovie = new Movie(movieName, movieRating, movieRuntime, movieReleaseyear);
 
-                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is released " + myMovie.getRating());
+                Log.d("MYFIREBASETAG", dataSnapshot.getKey() + " is released " + myMovie.getReleaseYear());
 
                 mMovies.add(myMovie);
                 Log.d("MYFIREBASETAG", "Updating movies after sorted list by release year");
