@@ -62,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
         //Update the UI to display database content
         //mMovieRepository.updateAllMoviesList(this, "rating");
 
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Log.d("MYFIREBASETAG", "User signed in");
+        } else {
+            Log.d("MYFIREBASETAG", "No User signed in");
+        }
+
+
         // Get Firebase database
         mFirebase = FirebaseDatabase.getInstance().getReference();
 
@@ -155,11 +164,21 @@ public class MainActivity extends AppCompatActivity {
             else {
                 if (resultCode == RESULT_CANCELED) {
                     Log.d("MYFIREBASETAG", "User cancelled log in");
-                }
+                    }
                 else {
                     Log.d("MYFIREBASETAG", "Log in failed with error: "
                             + response.getError().getErrorCode());
                 }
+
+                //show alert and reprompt login
+
+                List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
+
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setAvailableProviders(providers).build()
+                        , RC_SIGN_IN);
             }
         }
     }
