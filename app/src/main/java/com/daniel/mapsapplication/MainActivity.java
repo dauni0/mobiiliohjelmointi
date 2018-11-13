@@ -3,6 +3,7 @@ package com.daniel.mapsapplication;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -131,5 +132,11 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    public void showMap(View view) {
+        Intent mapsIntent = new Intent(this, MapsActivity.class);
+        mapsIntent.putExtra("MY_LOCATION", mLocation);
+        startActivity(mapsIntent);
     }
 }
